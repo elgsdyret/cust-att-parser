@@ -1,0 +1,42 @@
+
+The purpose of Custom Attribute Parser (CAP) is to enable easy custom parsing of a specific attribute on a Backbone model.
+
+CAP identifies custom parser method based on a simple naming convention - ie. parse<Something>
+
+If any custom parser are found CAP wraps the parse method on the model. When parse is called CAP will call the custom parser
+for a given attribute if the attribute if present in the response.
+
+A parser is linked to an attribute by a simple naming convention: parse<AttributeName>, ie. 'parseName' is the parser for the
+'name' attribute.
+
+CAP ensures that the parsed attribute is placed at the given attribute in the original parse result. The custom parser gets the
+resp as input, and is responsible for grabbing the pieces needed from that, and should return the custom parsed result.
+
+
+
+
+
+
+MIT license
+------------------------------
+Copyright (C) <year> <copyright holders>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+

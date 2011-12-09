@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>	
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<title>Jasmine tests</title>
+        <!-- Load Jquery files from Google CDN -->
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+        <script src="libs/jasmine/lib/jasmine-core/jasmine.js"></script>
+        <script src="libs/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+	    <script src="libs/jasmine-ajax/lib/mock-ajax.js"></script>
+    	<link type="text/css" rel="stylesheet" href="libs/jasmine/lib/jasmine-core/jasmine.css" />
+    </head>
+    <body>
+        <!-- Required libraries -->
+		<script src="../lib/underscore/underscore.js"></script>
+		<script src="../lib/backbone/backbone.js"></script>
+		<!-- Source files -->
+		<script src="../src/CAP.js"></script>
+        <!-- Helper files -->
+        <!-- Spec files -->
+		<script src="CAP.spec.js"></script>
+    	<script type="text/javascript">
+    		jQuery(document).ready(function () {
+	    		var jasmineEnv = jasmine.getEnv();
+		    	jasmineEnv.updateInterval = 1000;
+
+			    var trivialReporter = new jasmine.TrivialReporter();
+
+    			jasmineEnv.addReporter(trivialReporter);
+
+	    		jasmineEnv.specFilter = function(spec) {
+		    		return trivialReporter.specFilter(spec);
+			    };
+			    jasmineEnv.execute();
+		    });
+    	</script>
+    </body>
+</html>

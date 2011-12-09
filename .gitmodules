@@ -1,0 +1,12 @@
+[submodule "lib/backbone"]
+	path = lib/backbone
+	url = git://github.com/documentcloud/backbone.git
+[submodule "lib/underscore"]
+	path = lib/underscore
+	url = git://github.com/documentcloud/underscore.git
+[submodule "specs/libs/jasmine"]
+	path = specs/libs/jasmine
+	url = git://github.com/pivotal/jasmine.git
+[submodule "specs/libs/jasmine-ajax"]
+	path = specs/libs/jasmine-ajax
+	url = git://github.com/pivotal/jasmine-ajax.git
