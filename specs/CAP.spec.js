@@ -1,29 +1,28 @@
 
 describe('src/shared/utils/CAP.js', function() {
 	describe('CAP', function(){
+
 		it('uses default behaviour when no custom attribute parse methods defined', function(){
 			// arrange
-			var person = Backbone.Model.extend();
+			var person = CAP(Backbone.Model.extend());
 			var testPerson = new person();
 
 			var resp = { name: 'Name' };
 
 			// act
-			var zTestPerson = CAP(testPerson);
-			var parsedAttributes = zTestPerson.parse(resp);
+			var parsedAttributes = testPerson.parse(resp);
 
 			// assert
 			expect(parsedAttributes.name).toEqual('Name');
 		});
 
-
 		it('uses defined custom attribute parse method given by convention', function () {
+
 			// arrange
-			var model = {
-				parse: function (resp) { return resp; },
+			var model = CAP(Backbone.Model.extend({
 				parseName: function (attrResp) { return attrResp['name'] + ' - new name' },
 				parseCamelCaseName: function (attrResp) { return attrResp['camelCaseName'] + ' - new camelCaseName' }
-			};
+			}));
 
 			var resp = {
 				name: 'old name',
@@ -31,20 +30,19 @@ describe('src/shared/utils/CAP.js', function() {
 			};
 
 			// act
-			var zModel = CAP(model);
-			var parsedAttributes = zModel.parse(resp);
+			var instance = new model();
+			var parsedAttributes = instance.parse(resp);
 
 			// assert
 			expect(parsedAttributes.name).toEqual('old name - new name');
 			expect(parsedAttributes.camelCaseName).toEqual('old camelCaseName - new camelCaseName');
 		});
-		
+
 		it('uses defined custom attribute parse method, but re-use other attributes', function(){
 			// arrange
-			var model = {
-				parse: function(resp){ return resp;	},
+			var model = CAP(Backbone.Model.extend({
 				parseName: function(attrResp){ return attrResp['name'] + ' name' }
-			};
+			}));
 
 			var resp = {
 				id: 1,
@@ -52,22 +50,20 @@ describe('src/shared/utils/CAP.js', function() {
 			};
 
 			// act
-			var zModel = CAP(model);
-			var parsedAttributes = zModel.parse(resp);
+			var instance = new model();
+			var parsedAttributes = instance.parse(resp);
 
 			// assert
 			expect(parsedAttributes.id).toEqual(1);
 			expect(parsedAttributes.name).toEqual('old name name');
 		});
 
-		
 		it('uses multiple defined custom attribute parse methods, but re-use other attributes', function(){
 			// arrange
-			var model = {
-				parse: function(resp){ return resp;	},
-				parseName: function(attrResp){ console.log(attrResp); return attrResp['name'] + ' name' },
+			var model = CAP(Backbone.Model.extend({
+				parseName: function(attrResp){ return attrResp['name'] + ' name' },
 				parseNumber: function(attrResp){ return attrResp['number'] + 2 }
-			};
+			}));
 
 			var resp = {
 				id: 1,
@@ -76,8 +72,8 @@ describe('src/shared/utils/CAP.js', function() {
 			};
 
 			// act
-			var zModel = CAP(model);
-			var parsedAttributes = zModel.parse(resp);
+			var instance = new model();
+			var parsedAttributes = instance.parse(resp);
 
 			// assert
 			expect(parsedAttributes.id).toEqual(1);
@@ -85,24 +81,28 @@ describe('src/shared/utils/CAP.js', function() {
 			expect(parsedAttributes.number).toEqual(44);
 		});
 
-		it('uses defined attributes parse methods on backbone model, but re-use other attributes', function(){
+		it('uses old parse method and add custom attribute parse methods results', function(){
 			// arrange
-			var person = Backbone.Model.extend({
-				parseName: function(resp){
-					return 'custom' + resp['name'];
-				}
-			});
-			var testPerson = new person();
+			var model = CAP(Backbone.Model.extend({
+				parse: function(resp){
+					resp['number'] = resp['number'] +1;
+					return resp;
+				},
+				parseNumber: function(attrResp){ return attrResp['number'] + 2 }
+			}));
 
-			var resp = { name: 'Name' };
+			var resp = {								
+				number: 42
+			};
 
 			// act
-			var zTestPerson = CAP(testPerson);
-			var parsedAttributes = zTestPerson.parse(resp);
+			var instance = new model();
+			var parsedAttributes = instance.parse(resp);
 
 			// assert
-			expect(parsedAttributes.name).toEqual('customName');
+			expect(parsedAttributes.number).toEqual(45);
 		});
+
 		describe('ajax result from server is handled', function(){
 			beforeEach(function(){
 				jasmine.Ajax.useMock();
@@ -115,13 +115,13 @@ describe('src/shared/utils/CAP.js', function() {
 					responseText: '{"name": "muffin", "age": 4}'
 				};
 
-				var Dog = Backbone.Model.extend({
+				var Dog = CAP(Backbone.Model.extend({
 					url: '/dogs/',
 					parseName: function(resp){
 						return 'ms ' + resp['name'];
 					}
-				});
-				var bestDog = CAP(new Dog());
+				}));
+				var bestDog = new Dog();
 
 				// act
 				bestDog.fetch();

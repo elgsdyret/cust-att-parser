@@ -14,12 +14,12 @@ CAP ensures that the parsed attribute is placed at the given attribute in the or
 resp as input, and is responsible for grabbing the pieces needed from that, and should return the custom parsed result.
 */
 
-this.CAP = function (model) {
+this.CAP = function(model) {
+
 	// retrieve all custom parsers ie. all method name parse<Something>
 	var filterFunction = function (functionName) {
 		return functionName.length > 5 && functionName.substring(0, 5) == 'parse';
 	};
-	var customParsers = _(model).functions().filter(filterFunction);
 
 	// retrieve the attr name from the custom parser
 	var attrNameFromMethodName = function (methodName) {
@@ -27,26 +27,25 @@ this.CAP = function (model) {
 	};
 
 	// run all the custom parsers
-	var runCustomParsers = function (baseParse, customParsers, resp) {
-		var parsed = baseParse(resp);
+	var runCustomParsers = function (model, oldBaseFunction, resp, customParsers) {
 		var setCustomParsedAttribute = function (customParserName) {
+			var parsed = oldBaseFunction(resp);
 			var attrName = attrNameFromMethodName(customParserName);
 			// only run the parse if we actually need to, ie. if the specific attr is present
-			parsed[attrName] != null && (parsed[attrName] = model[customParserName](resp));
+			parsed[attrName] != null && (parsed[attrName] = model[customParserName](parsed));
 		};
 		_(customParsers).each(setCustomParsedAttribute)
-		return parsed;
+		return resp;
 	};
 
-	// wrap the original parse method with our runCustomParsers
-	var wrapParse = function (model, parsers) {
-		// wrap parsers in an array, since bind will think it is an arguments array
-		model.parse = _(model.parse).wrap(runCustomParsers).bind(this, [parsers]);
-	};
-
-	// wrap, but only if we need to
-	if (customParsers.length > 0)
-		wrapParse(model, customParsers);
-
-	return model;
+	// grab the existing parse function
+	var baseFunction = model.prototype.parse;
+	
+	return model.extend({
+		parse: function(resp, xhr){
+			baseFunction = baseFunction.bind(this);
+			var customParsers = _(this).functions().filter(filterFunction);
+			return runCustomParsers(this, baseFunction, resp, customParsers);
+		}
+	});
 };
