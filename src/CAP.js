@@ -15,6 +15,7 @@ resp as input, and is responsible for grabbing the pieces needed from that, and 
 */
 
 this.CAP = function(model) {
+	var me = model.prototype;
 
 	// retrieve all custom parsers ie. all method name parse<Something>
 	var filterFunction = function (functionName) {
@@ -39,13 +40,13 @@ this.CAP = function(model) {
 	};
 
 	// grab the existing parse function
-	var baseFunction = model.prototype.parse;
+	var baseFunction = me.parse;
 	
 	return model.extend({
 		parse: function(resp, xhr){
-			baseFunction = baseFunction.bind(this);
-			var customParsers = _(this).functions().filter(filterFunction);
-			return runCustomParsers(this, baseFunction, resp, customParsers);
+			baseFunction = baseFunction.bind(me);
+			var customParsers = _(me).functions().filter(filterFunction);
+			return runCustomParsers(me, baseFunction, resp, customParsers);
 		}
 	});
 };

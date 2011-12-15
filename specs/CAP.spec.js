@@ -1,5 +1,5 @@
 
-describe('src/shared/utils/CAP.js', function() {
+describe('CAP.js', function() {
 	describe('CAP', function(){
 
 		it('uses default behaviour when no custom attribute parse methods defined', function(){
