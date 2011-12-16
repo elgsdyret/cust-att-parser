@@ -103,6 +103,45 @@ describe('CAP.js', function() {
 			expect(parsedAttributes.number).toEqual(45);
 		});
 
+		it('has proper this inside custom parse method', function(){
+			// arrange
+			var model = CAP(Backbone.Model.extend({
+				someOtherMethod: function(){ return this.get('number'); },
+				parseNumber: function(attrResp){ return this.someOtherMethod() + 2 }
+			}));
+
+			var resp = {
+				number: 42
+			};
+
+			// act
+			var instance = new model({number: 4});
+			var parsedAttributes = instance.parse(resp);
+
+			// assert
+			expect(parsedAttributes.number).toEqual(6);
+		});
+
+		it('updates state correctly - PARSE SHOULD NOT UPDATE STATE', function(){
+			// arrange
+			var model = CAP(Backbone.Model.extend({
+				parseNumber: function(attrResp){ this.set({number: 2})}
+			}));
+
+			var resp = {
+				number: 42
+			};
+
+			// act
+			var instance = new model({number: 4});
+			var parsedAttributes = instance.parse(resp);
+
+			// assert
+			expect(parsedAttributes.number).toBeUndefined();
+			expect(instance.get('number')).toBe(2);
+		});
+
+
 		describe('ajax result from server is handled', function(){
 			beforeEach(function(){
 				jasmine.Ajax.useMock();

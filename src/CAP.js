@@ -44,9 +44,9 @@ this.CAP = function(model) {
 	
 	return model.extend({
 		parse: function(resp, xhr){
-			baseFunction = baseFunction.bind(me);
-			var customParsers = _(me).functions().filter(filterFunction);
-			return runCustomParsers(me, baseFunction, resp, customParsers);
+			baseFunction = baseFunction.bind(this);
+			var customParsers = _(this).functions().filter(filterFunction);
+			return runCustomParsers(this, baseFunction, resp, customParsers);
 		}
 	});
 };
