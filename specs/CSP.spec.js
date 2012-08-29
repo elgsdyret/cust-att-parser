@@ -87,5 +87,28 @@ describe('CSP.js', function() {
 			expect(result[1].abc).toBe(3);
 			expect(result[1].def).toBe(4);
 		});
+
+		it('maintains correct context (this) for all elements in collection', function(){
+			var model = CAP(Backbone.Model.extend({
+				initialize: function(){
+					this.a = 1;
+				},
+				parseAbc: function(resp){
+					this.a++;
+				}
+			}));
+
+			var collection = CSP(Backbone.Collection.extend({
+				model: model
+			}));
+
+			var instanceCollection = new collection();
+
+			// todo when is the model instance added in the parse flow? - not by parse specifically..
+
+			instanceCollection.parse([{ abc: 1, def: 2}]);
+
+			expect(instanceCollection.at(0).a).toBe(2);
+		});
 	});
 });
